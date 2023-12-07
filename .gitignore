@@ -1,3 +1,8 @@
 myenv/
 *.cpp
+<<<<<<< HEAD
 *.pdf
+=======
+*.pdf
+.vscode/
+>>>>>>> new-features
