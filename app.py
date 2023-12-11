@@ -1,22 +1,41 @@
-
 from reportlab.pdfgen import canvas
+import glob
 import sys
+import os
+import glob
 
 limiteLineas = 51
 imprimir = ""
 pdf_path = "./pruebas.pdf"
-
 file_path = sys.argv[1] # es el path del archivo que se le pasa como argumento
-with open(file_path, "r") as file:
-    content = file.read() #lee el contenido del archivo
-
-
-
-lines_code = content.split('\n') # es una lista de lineas de codigo
-ultima_linea = len(lines_code) # obtengo la ultima linea del archivo su indice
-contador = 0
-
 c = canvas.Canvas(pdf_path)
+
+
+def listar_archivos(directorio):
+    archivos_cpp = glob.glob(directorio + "/*.cpp")
+    return archivos_cpp
+
+
+def leer_archivo(file_path):
+    with open(file_path, "r") as file:
+        content = file.read() #lee el contenido del archivo
+    return content
+
+def preparar_contenido(path):
+    global c
+    global imprimir
+    lines_code = leer_archivo(path).split('\n') # es una lista de lineas de codigo
+    ultima_linea = len(lines_code) # obtengo la ultima linea del archivo su indice
+    contador = 0
+    for contadorLinea, line in enumerate(lines_code, start=1):
+        if contador < limiteLineas: # esto solamente es falso cuando cuando contador es igual a 51, si contador no llega a 51 no se imprime nada
+            imprimir = imprimir + line + "\n"
+            contador = contador + 1
+            if contadorLinea == ultima_linea:
+                imprimirLineas()
+        else:
+            imprimirLineas()
+
 def imprimirLineas():
     global contador
     global imprimir
@@ -30,14 +49,7 @@ def imprimirLineas():
     contador = 0
     imprimir = ""
 
-for contadorLinea, line in enumerate(lines_code, start=1):
-    if contador < limiteLineas: # esto solamente es falso cuando cuando contador es igual a 51, si contador no llega a 51 no se imprime nada
-        imprimir = imprimir + line + "\n"
-        contador = contador + 1
-        if contadorLinea == ultima_linea:
-            imprimirLineas()
-    else:
-        imprimirLineas()
+preparar_contenido(file_path)
 
 c.save()
 # Create a PDF with the content

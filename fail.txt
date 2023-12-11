@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/home/marco/Software/CodetoPdf/app.py", line 43, in <module>
+    preparar_contenido(file_path)
+  File "/home/marco/Software/CodetoPdf/app.py", line 23, in preparar_contenido
+    imprimir = imprimir + line + "\n"
+UnboundLocalError: local variable 'imprimir' referenced before assignment
