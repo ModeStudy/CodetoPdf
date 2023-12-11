@@ -2,23 +2,31 @@ from reportlab.pdfgen import canvas
 import glob
 import sys
 import os
-import glob
 
 limiteLineas = 51
 pdf_path = "./pruebas.pdf"
 file_path = sys.argv[1] # es el path del archivo que se le pasa como argumento
 c = canvas.Canvas(pdf_path)
 
-
-def listar_archivos(directorio):
-    archivos_cpp = glob.glob(directorio + "/*.cpp")
-    return archivos_cpp
-
-
 def leer_archivo(file_path):
     with open(file_path, "r") as file:
         content = file.read() #lee el contenido del archivo
     return content
+
+def listar_archivos(directorio):
+    archivos_encontrados = []
+    archivos = os.listdir(directorio)
+    lenguajes_busqueda = leer_archivo("busqueda.txt").strip().split("\n")
+    for archivo in archivos:
+        for lenguaje in lenguajes_busqueda:
+            if archivo.endswith(lenguaje):
+                archivos_encontrados.append(archivo)
+    return archivos_encontrados
+
+print(listar_archivos(file_path))
+
+
+
 
 def preparar_contenido(path):
     global c 
@@ -49,8 +57,11 @@ def imprimirLineas(imprimir, contador):
     c.showPage()
 
 
-for archivo in listar_archivos(file_path):
-    preparar_contenido(archivo)
+"""if os.path.isdir(file_path):
+    for archivo in listar_archivos(file_path):
+        preparar_contenido(archivo)
+else:
+    preparar_contenido(file_path)"""
 
 c.save()
 # Create a PDF with the content
