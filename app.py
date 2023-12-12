@@ -5,6 +5,7 @@ import os
 
 limiteLineas = 51
 pdf_path = "./pruebas.pdf"
+busqueda_path = "busqueda.txt"
 file_path = sys.argv[1] # es el path del archivo que se le pasa como argumento
 c = canvas.Canvas(pdf_path)
 
@@ -13,18 +14,24 @@ def leer_archivo(file_path):
         content = file.read() #lee el contenido del archivo
     return content
 
-def listar_archivos(directorio):
-    archivos_encontrados = []
-    archivos = os.listdir(directorio)
-    lenguajes_busqueda = leer_archivo("busqueda.txt").strip().split("\n")
+def preparar_lenguajes(path):
+    lenguajes_aux =leer_archivo(path).split('\n')
+    lenguajes = []
+    for lenguaje in lenguajes_aux:
+        if lenguaje != "":
+            lenguajes.append(lenguaje)
+    lenguajes_aux.clear()
+    return lenguajes
+
+def listar_archivos(path):
+    lenguajes = preparar_lenguajes(busqueda_path)
+    archivos = os.listdir(path)
+    listar_archivos = []
     for archivo in archivos:
-        for lenguaje in lenguajes_busqueda:
+        for lenguaje in lenguajes:
             if archivo.endswith(lenguaje):
-                archivos_encontrados.append(archivo)
-    return archivos_encontrados
-
-print(listar_archivos(file_path))
-
+                listar_archivos.append(archivo)
+    return listar_archivos
 
 
 
@@ -49,7 +56,7 @@ def preparar_contenido(path):
 
 def imprimirLineas(imprimir, contador):
     global c
-    text_object = c.beginText(72, 769.89)# 72 = 1 inch como margen
+    text_object = c.beginText(72, 769)# 72 = 1 inch como margen
     text_object.setFont("Times-Roman", 12)
     text_object.setLeading(13.8)
     text_object.textLines(imprimir)
@@ -57,11 +64,11 @@ def imprimirLineas(imprimir, contador):
     c.showPage()
 
 
-"""if os.path.isdir(file_path):
+if os.path.isdir(file_path):
     for archivo in listar_archivos(file_path):
         preparar_contenido(archivo)
 else:
-    preparar_contenido(file_path)"""
+    preparar_contenido(file_path)
 
 c.save()
 # Create a PDF with the content
