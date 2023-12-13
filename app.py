@@ -5,7 +5,7 @@ import os
 
 limiteLineas = 51
 pdf_path = "./pruebas.pdf"
-busqueda_path = "busqueda.txt"
+busqueda_path = sys.argv[2] # es el path del archivo que se le pasa como argumento
 file_path = sys.argv[1] # es el path del archivo que se le pasa como argumento
 c = canvas.Canvas(pdf_path)
 
