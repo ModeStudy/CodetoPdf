@@ -30,6 +30,7 @@ def listar_archivos(path):
     for archivo in archivos:
         for lenguaje in lenguajes:
             if archivo.endswith(lenguaje):
+                archivo = path + "/" + archivo
                 listar_archivos.append(archivo)
     return listar_archivos
 
