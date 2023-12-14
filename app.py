@@ -1,3 +1,4 @@
+from re import T
 from reportlab.pdfgen import canvas
 import glob
 import sys
@@ -42,28 +43,43 @@ def preparar_contenido(path):
     ultima_linea = len(lines_code) # obtengo la ultima linea del archivo su indice
     contador = 0
     imprimir = ""
+    y , x = 769, 72
     for contadorLinea, line in enumerate(lines_code, start=1):
+        if contadorLinea == 1: 
+            c.setFont("Times-Roman", 20)
+            c.drawString(72, 769, obtener_titulo(path))
+            y = 744
         if contador < limiteLineas: # esto solamente es falso cuando cuando contador es igual a 51, si contador no llega a 51 no se imprime nada
             imprimir = imprimir + line + "\n"
             contador = contador + 1
             if contadorLinea == ultima_linea:
-                imprimirLineas(imprimir, contador)
+                imprimirLineas(imprimir, x, y)
                 imprimir = ""
                 contador = 0
+                y = 769
         else:
-            imprimirLineas(imprimir, contador)
+            imprimirLineas(imprimir, x, y)
             imprimir = ""
             contador = 0
+            y = 769
 
-def imprimirLineas(imprimir, contador):
+def imprimirLineas(imprimir, x, y): #antes de este paso el contenido ya debe de estar preparado
     global c
-    text_object = c.beginText(72, 769)# 72 = 1 inch como margen
+    text_object = c.beginText(x, y)# 72 = 1 inch como margen
     text_object.setFont("Times-Roman", 12)
     text_object.setLeading(13.8)
     text_object.textLines(imprimir)
     c.drawText(text_object)
     c.showPage()
 
+def obtener_titulo(path):
+    ruta_archivo = ""
+    for letra in path[::-1]: #volteo la ruta para empezar desde la ultima posicion
+        if letra == "/":
+            break #si encuentra una diagonal ya no me interesa seguir buscando
+        else:
+            ruta_archivo = ruta_archivo + letra #si es una letra la agrego a la variable
+    return ruta_archivo[::-1] #finalmente invertimos la cadena
 
 if os.path.isdir(file_path):
     for archivo in listar_archivos(file_path):
