@@ -1,14 +1,13 @@
-from re import T
 from reportlab.pdfgen import canvas
 import glob
 import sys
 import os
 
-limiteLineas = 51
+limiteLineas = 47
 pdf_path = "./pruebas.pdf"
 busqueda_path = sys.argv[2] # es el path del archivo que se le pasa como argumento
 file_path = sys.argv[1] # es el path del archivo que se le pasa como argumento
-c = canvas.Canvas(pdf_path)
+c = canvas.Canvas(pdf_path, pagesize=(612,792))
 
 def leer_archivo(file_path):
     with open(file_path, "r") as file:
@@ -43,25 +42,38 @@ def preparar_contenido(path):
     ultima_linea = len(lines_code) # obtengo la ultima linea del archivo su indice
     contador = 0
     imprimir = ""
-    y , x = 769, 72
+    y , x = 720, 72
     for contadorLinea, line in enumerate(lines_code, start=1):
         if contadorLinea == 1: 
             c.setFont("Times-Roman", 20)
-            c.drawString(72, 769, obtener_titulo(path))
-            y = 744
+            c.drawString(72, 720, obtener_titulo(path))
+            y = 700
         if contador < limiteLineas: # esto solamente es falso cuando cuando contador es igual a 51, si contador no llega a 51 no se imprime nada
-            imprimir = imprimir + line + "\n"
+            if len(line)>80:
+                aux, contador_aux = "", 0
+                last = len(line)-1
+                for i, letra in enumerate(line):
+                    
+                    if contador_aux < 80:
+                        aux = aux + letra
+                    else:
+                        lines_code.insert(contadorLinea -1, aux)
+                        aux = ""
+                        contador_aux = 0
+                    if last == i:
+                        lines_code.insert(contadorLinea -1, aux)
+            imprimir = imprimir + line + "\n"   
             contador = contador + 1
             if contadorLinea == ultima_linea:
                 imprimirLineas(imprimir, x, y)
                 imprimir = ""
                 contador = 0
-                y = 769
+                y = 720
         else:
             imprimirLineas(imprimir, x, y)
             imprimir = ""
             contador = 0
-            y = 769
+            y = 720
 
 def imprimirLineas(imprimir, x, y): #antes de este paso el contenido ya debe de estar preparado
     global c
