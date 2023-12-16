@@ -49,19 +49,12 @@ def preparar_contenido(path):
             c.drawString(72, 720, obtener_titulo(path))
             y = 700
         if contador < limiteLineas: # esto solamente es falso cuando cuando contador es igual a 51, si contador no llega a 51 no se imprime nada
-            if len(line)>80:
-                aux, contador_aux = "", 0
-                last = len(line)-1
-                for i, letra in enumerate(line):
-                    
-                    if contador_aux < 80:
-                        aux = aux + letra
-                    else:
-                        lines_code.insert(contadorLinea -1, aux)
-                        aux = ""
-                        contador_aux = 0
-                    if last == i:
-                        lines_code.insert(contadorLinea -1, aux)
+            if len(line) > 80:
+                nuevas_lineas = desbordamiento_vertical(line, 80)
+                line = nuevas_lineas[0]
+                nuevas_lineas.pop(0)
+                for linea in reversed(nuevas_lineas):
+                    lines_code.insert(contadorLinea, linea)
             imprimir = imprimir + line + "\n"   
             contador = contador + 1
             if contadorLinea == ultima_linea:
@@ -92,6 +85,16 @@ def obtener_titulo(path):
         else:
             ruta_archivo = ruta_archivo + letra #si es una letra la agrego a la variable
     return ruta_archivo[::-1] #finalmente invertimos la cadena
+
+def desbordamiento_vertical(linea, split):
+    aux, lineas = "", []
+    for i, letra in enumerate(linea):
+        aux += letra
+        if i == len(linea)-1 or len(aux) == split:
+            lineas.append(aux)
+            aux = ""
+    return lineas
+
 
 if os.path.isdir(file_path):
     for archivo in listar_archivos(file_path):
